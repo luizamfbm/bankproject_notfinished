@@ -1,0 +1,228 @@
+// Bank System - codesandbox
+
+// Users Array
+let users = [];
+
+// Function to create a new user
+function createUser(id, name, birthday, address, street, number, zipcode, country, registerNumber) {
+  const user = {
+    id,
+    name,
+    birthday,
+    address: {
+      street,
+      number,
+      zipcode,
+      country
+    },
+    registerNumber,
+    balance: 0,
+    transactionHistory: []
+  };
+  users.push(user);
+}
+
+// Function to edit user details
+function editUser(id, newName, newBirthday, newAddress) {
+  const user = users.find(user => user.id === id);
+  if (user) {
+    user.name = newName;
+    user.birthday = newBirthday;
+    user.address = newAddress;
+    console.log("User details updated successfully.");
+  } else {
+    console.log("User not found.");
+  }
+}
+
+// Function to delete a user
+function deleteUser(id) {
+  const index = users.findIndex(user => user.id === id);
+  if (index !== -1) {
+    users.splice(index, 1);
+    console.log("User deleted successfully.");
+  } else {
+    console.log("User not found.");
+  }
+}
+
+// Function to get the total balance of a user
+function getTotalBalance(id) {
+  const user = users.find(user => user.id === id);
+  if (user) {
+    console.log(`Total balance for user ${user.name}: ${user.balance}`);
+  } else {
+    console.log("User not found.");
+  }
+}
+
+// Function to withdraw an amount from a user's account
+function withdrawAmount(id, amount) {
+  const user = users.find(user => user.id === id);
+  if (user) {
+    if (user.balance >= amount) {
+      user.balance -= amount;
+      user.transactionHistory.push({
+        date: new Date(),
+        amount: -amount,
+        type: "Withdrawal"
+      });
+      console.log(`Withdrawal of ${amount} successful. Current balance: ${user.balance}`);
+    } else {
+      console.log("Insufficient funds.");
+    }
+  } else {
+    console.log("User not found.");
+  }
+}
+
+// Function to deposit an amount into a user's account
+function depositAmount(id, amount) {
+  const user = users.find(user => user.id === id);
+  if (user) {
+    user.balance += amount;
+    user.transactionHistory.push({
+      date: new Date(),
+      amount,
+      type: "Deposit"
+    });
+    console.log(`Deposit of ${amount} successful. Current balance: ${user.balance}`);
+  } else {
+    console.log("User not found.");
+  }
+}
+
+// Function to list all users
+function listAllUsers() {
+  if (users.length > 0) {
+    console.log("List of all users:");
+    users.forEach(user => {
+      console.log(`User ID: ${user.id}, Name: ${user.name}`);
+    });
+  } else {
+    console.log("No users found.");
+  }
+}
+
+// Bank System Menu
+function bankSystemMenu() {
+  console.log("Welcome to the Bank System!");
+  console.log("Select an option:");
+  console.log("1. Manager");
+  console.log("2. Customer");
+  const option = prompt("Enter your choice (1-2):");
+
+  switch (option) {
+    case "1":
+      managerMenu();
+      break;
+    case "2":
+      customerMenu();
+      break;
+    default:
+      console.log("Invalid option. Please try again.");
+      bankSystemMenu();
+      break;
+  }
+}
+
+// Manager Menu
+function managerMenu() {
+  console.log("Manager Menu");
+  console.log("Select an option:");
+  console.log("1. List of all users");
+  console.log("2. Create a user");
+  console.log("3. Edit user details");
+  console.log("4. Delete a user");
+  console.log("5. Go back to main menu");
+  const option = prompt("Enter your choice (1-5):");
+
+  switch (option) {
+    case "1":
+      listAllUsers();
+      managerMenu();
+      break;
+    case "2":
+      const id = prompt("Enter user ID:");
+      const name = prompt("Enter user name:");
+      const birthday = prompt("Enter user birthday:");
+      const street = prompt("Enter user address street:");
+      const number = prompt("Enter user address number:");
+      const zipcode = prompt("Enter user address zipcode:");
+      const country = prompt("Enter user address country:");
+      const registerNumber = prompt("Enter user register number (CPF/CNPJ):");
+      createUser(id, name, birthday, {}, street, number, zipcode, country, registerNumber);
+      console.log("User created successfully.");
+      managerMenu();
+      break;
+    case "3":
+      const editId = prompt("Enter user ID to edit details:");
+      const newName = prompt("Enter new user name:");
+      const newBirthday = prompt("Enter new user birthday:");
+      const newStreet = prompt("Enter new user address street:");
+      const newNumber = prompt("Enter new user address number:");
+      const newZipcode = prompt("Enter new user address zipcode:");
+      const newCountry = prompt("Enter new user address country:");
+      editUser(editId, newName, newBirthday, {
+        street: newStreet,
+        number: newNumber,
+        zipcode: newZipcode,
+        country: newCountry
+      });
+      managerMenu();
+      break;
+    case "4":
+      const deleteId = prompt("Enter user ID to delete:");
+      deleteUser(deleteId);
+      managerMenu();
+      break;
+    case "5":
+      bankSystemMenu();
+      break;
+    default:
+      console.log("Invalid option. Please try again.");
+      managerMenu();
+      break;
+  }
+}
+
+// Customer Menu
+function customerMenu() {
+  console.log("Customer Menu");
+  console.log("Select an option:");
+  console.log("1. Total balance");
+  console.log("2. Withdraw amount");
+  console.log("3. Deposit amount");
+  console.log("4. Go back to main menu");
+  const option = prompt("Enter your choice (1-4):");
+
+  switch (option) {
+    case "1":
+      const customerId = prompt("Enter your user ID:");
+      getTotalBalance(customerId);
+      customerMenu();
+      break;
+    case "2":
+      const withdrawId = prompt("Enter your user ID:");
+      const withdrawAmountValue = parseFloat(prompt("Enter the amount to withdraw:"));
+      withdrawAmount(withdrawId, withdrawAmountValue);
+      customerMenu();
+      break;
+    case "3":
+      const depositId = prompt("Enter your user ID:");
+      const depositAmountValue = parseFloat(prompt("Enter the amount to deposit:"));
+      depositAmount(depositId, depositAmountValue);
+      customerMenu();
+      break;
+    case "4":
+      bankSystemMenu();
+      break;
+    default:
+      console.log("Invalid option. Please try again.");
+      customerMenu();
+      break;
+  }
+}
+
+// Starting the Bank System
+bankSystemMenu();
